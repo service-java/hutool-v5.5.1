@@ -10,10 +10,10 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.TypeUtil;
 import cn.hutool.json.serialize.GlobalSerializeMapping;
-import cn.hutool.json.serialize.JSONArraySerializer;
-import cn.hutool.json.serialize.JSONDeserializer;
-import cn.hutool.json.serialize.JSONObjectSerializer;
-import cn.hutool.json.serialize.JSONSerializer;
+import cn.hutool.json.serialize.IJSONArraySerializer;
+import cn.hutool.json.serialize.IJSONDeserializer;
+import cn.hutool.json.serialize.IJSONObjectSerializer;
+import cn.hutool.json.serialize.IJSONSerializer;
 
 import java.io.File;
 import java.io.IOException;
@@ -192,7 +192,7 @@ public final class JSONUtil {
 	 * @param obj 对象
 	 * @return JSON
 	 */
-	public static JSON parse(Object obj) {
+	public static IJSON parse(Object obj) {
 		return parse(obj, JSONConfig.create());
 	}
 
@@ -208,14 +208,14 @@ public final class JSONUtil {
 	 * @return JSON
 	 * @since 5.3.1
 	 */
-	public static JSON parse(Object obj, JSONConfig config) {
+	public static IJSON parse(Object obj, JSONConfig config) {
 		if (null == obj) {
 			return null;
 		}
 
-		JSON json;
-		if (obj instanceof JSON) {
-			json = (JSON) obj;
+		IJSON json;
+		if (obj instanceof IJSON) {
+			json = (IJSON) obj;
 		} else if (obj instanceof CharSequence) {
 			final String jsonStr = StrUtil.trim((CharSequence) obj);
 			json = StrUtil.startWith(jsonStr, '[') ? parseArray(jsonStr) : parseObj(jsonStr);
@@ -273,7 +273,7 @@ public final class JSONUtil {
 	 * @return JSON（包括JSONObject和JSONArray）
 	 * @throws IORuntimeException IO异常
 	 */
-	public static JSON readJSON(File file, Charset charset) throws IORuntimeException {
+	public static IJSON readJSON(File file, Charset charset) throws IORuntimeException {
 		return parse(FileReader.create(file, charset).readString());
 	}
 
@@ -311,7 +311,7 @@ public final class JSONUtil {
 	 * @param indentFactor 每一级别的缩进
 	 * @return JSON字符串
 	 */
-	public static String toJsonStr(JSON json, int indentFactor) {
+	public static String toJsonStr(IJSON json, int indentFactor) {
 		if (null == json) {
 			return null;
 		}
@@ -324,7 +324,7 @@ public final class JSONUtil {
 	 * @param json JSON
 	 * @return JSON字符串
 	 */
-	public static String toJsonStr(JSON json) {
+	public static String toJsonStr(IJSON json) {
 		if (null == json) {
 			return null;
 		}
@@ -338,7 +338,7 @@ public final class JSONUtil {
 	 * @param writer Writer
 	 * @since 5.3.3
 	 */
-	public static void toJsonStr(JSON json, Writer writer) {
+	public static void toJsonStr(IJSON json, Writer writer) {
 		if (null != json) {
 			json.write(writer);
 		}
@@ -350,7 +350,7 @@ public final class JSONUtil {
 	 * @param json JSON
 	 * @return JSON字符串
 	 */
-	public static String toJsonPrettyStr(JSON json) {
+	public static String toJsonPrettyStr(IJSON json) {
 		if (null == json) {
 			return null;
 		}
@@ -402,7 +402,7 @@ public final class JSONUtil {
 	 * @param json JSON
 	 * @return XML字符串
 	 */
-	public static String toXmlStr(JSON json) {
+	public static String toXmlStr(IJSON json) {
 		return XML.toXml(json);
 	}
 	// -------------------------------------------------------------------- toString end
@@ -472,7 +472,7 @@ public final class JSONUtil {
 	 * @return 实体类对象
 	 * @since 4.6.2
 	 */
-	public static <T> T toBean(JSON json, TypeReference<T> typeReference, boolean ignoreError) {
+	public static <T> T toBean(IJSON json, TypeReference<T> typeReference, boolean ignoreError) {
 		return toBean(json, typeReference.getType(), ignoreError);
 	}
 
@@ -486,7 +486,7 @@ public final class JSONUtil {
 	 * @return 实体类对象
 	 * @since 4.3.2
 	 */
-	public static <T> T toBean(JSON json, Type beanType, boolean ignoreError) {
+	public static <T> T toBean(IJSON json, Type beanType, boolean ignoreError) {
 		if (null == json) {
 			return null;
 		}
@@ -523,12 +523,12 @@ public final class JSONUtil {
 	 * person.friends[5].name
 	 * </pre>
 	 *
-	 * @param json       {@link JSON}
+	 * @param json       {@link IJSON}
 	 * @param expression 表达式
 	 * @return 对象
-	 * @see JSON#getByPath(String)
+	 * @see IJSON#getByPath(String)
 	 */
-	public static Object getByPath(JSON json, String expression) {
+	public static Object getByPath(IJSON json, String expression) {
 		return (null == json || StrUtil.isBlank(expression)) ? null : json.getByPath(expression);
 	}
 
@@ -554,7 +554,7 @@ public final class JSONUtil {
 	 * @param expression 表达式
 	 * @param value      值
 	 */
-	public static void putByPath(JSON json, String expression, Object value) {
+	public static void putByPath(IJSON json, String expression, Object value) {
 		json.putByPath(expression, value);
 	}
 
@@ -698,9 +698,9 @@ public final class JSONUtil {
 		if (object == null) {
 			return jsonConfig.isIgnoreNullValue() ? null : JSONNull.NULL;
 		}
-		if (object instanceof JSON //
+		if (object instanceof IJSON //
 				|| JSONNull.NULL.equals(object) //
-				|| object instanceof JSONString //
+				|| object instanceof IJSONString //
 				|| object instanceof CharSequence //
 				|| object instanceof Number //
 				|| ObjectUtil.isBasicType(object) //
@@ -709,13 +709,13 @@ public final class JSONUtil {
 		}
 
 		// 自定义序列化
-		final JSONSerializer serializer = GlobalSerializeMapping.getSerializer(object.getClass());
+		final IJSONSerializer serializer = GlobalSerializeMapping.getSerializer(object.getClass());
 		if (null != serializer) {
 			final Type jsonType = TypeUtil.getTypeArgument(serializer.getClass());
 			if (null != jsonType) {
-				if (serializer instanceof JSONObjectSerializer) {
+				if (serializer instanceof IJSONObjectSerializer) {
 					serializer.serialize(new JSONObject(jsonConfig), object);
-				} else if (serializer instanceof JSONArraySerializer) {
+				} else if (serializer instanceof IJSONArraySerializer) {
 					serializer.serialize(new JSONArray(jsonConfig), object);
 				}
 			}
@@ -838,10 +838,10 @@ public final class JSONUtil {
 	 *
 	 * @param type       对象类型
 	 * @param serializer 序列化器实现
-	 * @see GlobalSerializeMapping#put(Type, JSONArraySerializer)
+	 * @see GlobalSerializeMapping#put(Type, IJSONArraySerializer)
 	 * @since 4.6.5
 	 */
-	public static void putSerializer(Type type, JSONArraySerializer<?> serializer) {
+	public static void putSerializer(Type type, IJSONArraySerializer<?> serializer) {
 		GlobalSerializeMapping.put(type, serializer);
 	}
 
@@ -850,10 +850,10 @@ public final class JSONUtil {
 	 *
 	 * @param type       对象类型
 	 * @param serializer 序列化器实现
-	 * @see GlobalSerializeMapping#put(Type, JSONObjectSerializer)
+	 * @see GlobalSerializeMapping#put(Type, IJSONObjectSerializer)
 	 * @since 4.6.5
 	 */
-	public static void putSerializer(Type type, JSONObjectSerializer<?> serializer) {
+	public static void putSerializer(Type type, IJSONObjectSerializer<?> serializer) {
 		GlobalSerializeMapping.put(type, serializer);
 	}
 
@@ -862,10 +862,10 @@ public final class JSONUtil {
 	 *
 	 * @param type         对象类型
 	 * @param deserializer 反序列化器实现
-	 * @see GlobalSerializeMapping#put(Type, JSONDeserializer)
+	 * @see GlobalSerializeMapping#put(Type, IJSONDeserializer)
 	 * @since 4.6.5
 	 */
-	public static void putDeserializer(Type type, JSONDeserializer<?> deserializer) {
+	public static void putDeserializer(Type type, IJSONDeserializer<?> deserializer) {
 		GlobalSerializeMapping.put(type, deserializer);
 	}
 

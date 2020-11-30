@@ -3,12 +3,12 @@ package cn.hutool.json;
 /**
  * JSON支持<br>
  * 继承此类实现实体类与JSON的相互转换
- * 
+ *
  * @author Looly
  *
  */
-public class JSONSupport implements JSONString{
-	
+public class JSONSupport implements IJSONString {
+
 	/**
 	 * JSON String转Bean
 	 * @param jsonString JSON String
@@ -23,7 +23,7 @@ public class JSONSupport implements JSONString{
 	public JSONObject toJSON() {
 		return new JSONObject(this);
 	}
-	
+
 	@Override
 	public String toJSONString() {
 		return toJSON().toString();
@@ -31,7 +31,7 @@ public class JSONSupport implements JSONString{
 
 	/**
 	 * 美化的JSON（使用回车缩进显示JSON），用于打印输出debug
-	 * 
+	 *
 	 * @return 美化的JSON
 	 */
 	public String toPrettyString() {

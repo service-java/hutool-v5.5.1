@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * JSONArray单元测试
- * 
+ *
  * @author Looly
  *
  */
@@ -44,6 +44,7 @@ public class JSONArrayTest {
 		array.add("value3");
 
 		Assert.assertEquals(array.get(0), "value1");
+		Assert.assertEquals(array.get(1), "value2");
 	}
 
 	@Test
@@ -102,34 +103,34 @@ public class JSONArrayTest {
 	@Test
 	public void toListTest2() {
 		String jsonArr = "[{\"id\":111,\"name\":\"test1\"},{\"id\":112,\"name\":\"test2\"}]";
-		
+
 		JSONArray array = JSONUtil.parseArray(jsonArr);
 		List<User> userList = JSONUtil.toList(array, User.class);
-		
+
 		Assert.assertFalse(userList.isEmpty());
 		Assert.assertEquals(User.class, userList.get(0).getClass());
-		
+
 		Assert.assertEquals(Integer.valueOf(111), userList.get(0).getId());
 		Assert.assertEquals(Integer.valueOf(112), userList.get(1).getId());
-		
+
 		Assert.assertEquals("test1", userList.get(0).getName());
 		Assert.assertEquals("test2", userList.get(1).getName());
 	}
-	
+
 	@Test
 	public void toDictListTest() {
 		String jsonArr = "[{\"id\":111,\"name\":\"test1\"},{\"id\":112,\"name\":\"test2\"}]";
-		
+
 		JSONArray array = JSONUtil.parseArray(jsonArr);
-		
+
 		List<Dict> list = JSONUtil.toList(array, Dict.class);
-		
+
 		Assert.assertFalse(list.isEmpty());
 		Assert.assertEquals(Dict.class, list.get(0).getClass());
-		
+
 		Assert.assertEquals(Integer.valueOf(111), list.get(0).getInt("id"));
 		Assert.assertEquals(Integer.valueOf(112), list.get(1).getInt("id"));
-		
+
 		Assert.assertEquals("test1", list.get(0).getStr("name"));
 		Assert.assertEquals("test2", list.get(1).getStr("name"));
 	}
@@ -200,11 +201,11 @@ public class JSONArrayTest {
 		map.put("name", name);
 		return map;
 	}
-	
+
 	static class User {
 		private Integer id;
 		private String name;
-		
+
 		public Integer getId() {
 			return id;
 		}

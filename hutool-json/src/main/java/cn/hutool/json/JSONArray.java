@@ -9,7 +9,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.TypeUtil;
 import cn.hutool.json.serialize.GlobalSerializeMapping;
-import cn.hutool.json.serialize.JSONSerializer;
+import cn.hutool.json.serialize.IJSONSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -26,14 +26,14 @@ import static cn.hutool.json.JSONConverter.jsonConvert;
  * JSON数组<br>
  * JSON数组是表示中括号括住的数据表现形式<br>
  * 对应的JSON字符串格格式例如:
- * 
+ *
  * <pre>
  * ["a", "b", "c", 12]
  * </pre>
- * 
+ *
  * @author looly
  */
-public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, RandomAccess {
+public class JSONArray implements IJSON, IJSONGetter<Integer>, List<Object>, RandomAccess {
 	private static final long serialVersionUID = 2664900568717612292L;
 
 	/** 默认初始大小 */
@@ -56,7 +56,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 	/**
 	 * 构造<br>
 	 * 默认使用{@link ArrayList} 实现
-	 * 
+	 *
 	 * @param initialCapacity 初始大小
 	 * @since 3.2.2
 	 */
@@ -67,7 +67,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 	/**
 	 * 构造<br>
 	 * 默认使用{@link ArrayList} 实现
-	 * 
+	 *
 	 * @param config JSON配置项
 	 * @since 4.6.5
 	 */
@@ -78,7 +78,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 	/**
 	 * 构造<br>
 	 * 默认使用{@link ArrayList} 实现
-	 * 
+	 *
 	 * @param initialCapacity 初始大小
 	 * @param config JSON配置项
 	 * @since 4.1.19
@@ -91,7 +91,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 	/**
 	 * 构造<br>
 	 * 将参数数组中的元素转换为JSON对应的对象加入到JSONArray中
-	 * 
+	 *
 	 * @param list 初始化的JSON数组
 	 */
 	public JSONArray(Iterable<Object> list) {
@@ -104,7 +104,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 	/**
 	 * 构造<br>
 	 * 将参数数组中的元素转换为JSON对应的对象加入到JSONArray中
-	 * 
+	 *
 	 * @param list 初始化的JSON数组
 	 */
 	public JSONArray(Collection<Object> list) {
@@ -137,7 +137,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 	/**
 	 * 从对象构造，忽略{@code null}的值<br>
 	 * 支持以下类型的参数：
-	 * 
+	 *
 	 * <pre>
 	 * 1. 数组
 	 * 2. {@link Iterable}对象
@@ -154,7 +154,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 	/**
 	 * 从对象构造<br>
 	 * 支持以下类型的参数：
-	 * 
+	 *
 	 * <pre>
 	 * 1. 数组
 	 * 2. {@link Iterable}对象
@@ -172,7 +172,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 	/**
 	 * 从对象构造<br>
 	 * 支持以下类型的参数：
-	 * 
+	 *
 	 * <pre>
 	 * 1. 数组
 	 * 2. {@link Iterable}对象
@@ -197,7 +197,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 
 	/**
 	 * 设置转为字符串时的日期格式，默认为时间戳（null值）
-	 * 
+	 *
 	 * @param format 格式，null表示使用时间戳
 	 * @return this
 	 * @since 4.1.19
@@ -343,7 +343,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 
 	/**
 	 * 当此JSON列表的每个元素都是一个JSONObject时，可以调用此方法返回一个Iterable，便于使用foreach语法遍历
-	 * 
+	 *
 	 * @return Iterable
 	 * @since 4.0.12
 	 */
@@ -493,7 +493,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 
 	/**
 	 * 转为Bean数组
-	 * 
+	 *
 	 * @param arrayClass 数组元素类型
 	 * @return 实体类对象
 	 */
@@ -503,7 +503,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 
 	/**
 	 * 转为{@link ArrayList}
-	 * 
+	 *
 	 * @param <T> 元素类型
 	 * @param elementType 元素类型
 	 * @return {@link ArrayList}
@@ -536,7 +536,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 
 	/**
 	 * 将JSON内容写入Writer
-	 * 
+	 *
 	 * @param writer writer
 	 * @param indentFactor 缩进因子，定义每一级别增加的缩进量
 	 * @param indent 本级别缩进量
@@ -575,7 +575,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 
 	/**
 	 * 初始化
-	 * 
+	 *
 	 * @param source 数组或集合或JSON数组字符串
 	 * @throws JSONException 非数组或集合
 	 */
@@ -585,7 +585,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 			return;
 		}
 
-		final JSONSerializer serializer = GlobalSerializeMapping.getSerializer(source.getClass());
+		final IJSONSerializer serializer = GlobalSerializeMapping.getSerializer(source.getClass());
 		if (null != serializer && JSONArray.class.equals(TypeUtil.getTypeArgument(serializer.getClass()))) {
 			// 自定义序列化
 			serializer.serialize(this, source);
@@ -613,7 +613,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 
 	/**
 	 * 初始化
-	 * 
+	 *
 	 * @param source JSON字符串
 	 */
 	private void init(CharSequence source) {
@@ -624,7 +624,7 @@ public class JSONArray implements JSON, JSONGetter<Integer>, List<Object>, Rando
 
 	/**
 	 * 初始化
-	 * 
+	 *
 	 * @param x {@link JSONTokener}
 	 */
 	private void init(JSONTokener x) {

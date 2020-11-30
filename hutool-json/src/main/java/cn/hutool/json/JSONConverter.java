@@ -9,30 +9,30 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.TypeUtil;
 import cn.hutool.json.serialize.GlobalSerializeMapping;
-import cn.hutool.json.serialize.JSONDeserializer;
+import cn.hutool.json.serialize.IJSONDeserializer;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
 /**
  * JSON转换器
- * 
+ *
  * @author looly
  * @since 4.2.2
  */
-public class JSONConverter implements Converter<JSON> {
+public class JSONConverter implements Converter<IJSON> {
 
 	static {
 		// 注册到转换中心
 		ConverterRegistry registry = ConverterRegistry.getInstance();
-		registry.putCustom(JSON.class, JSONConverter.class);
+		registry.putCustom(IJSON.class, JSONConverter.class);
 		registry.putCustom(JSONObject.class, JSONConverter.class);
 		registry.putCustom(JSONArray.class, JSONConverter.class);
 	}
 
 	/**
 	 * JSONArray转数组
-	 * 
+	 *
 	 * @param jsonArray JSONArray
 	 * @param arrayClass 数组元素类型
 	 * @return 数组对象
@@ -43,7 +43,7 @@ public class JSONConverter implements Converter<JSON> {
 
 	/**
 	 * 将JSONArray转换为指定类型的对量列表
-	 * 
+	 *
 	 * @param <T> 元素类型
 	 * @param jsonArray JSONArray
 	 * @param elementType 对象元素类型
@@ -69,11 +69,11 @@ public class JSONConverter implements Converter<JSON> {
 		if (JSONUtil.isNull(value)) {
 			return null;
 		}
-		
-		if(value instanceof JSON) {
-			final JSONDeserializer<?> deserializer = GlobalSerializeMapping.getDeserializer(targetType);
+
+		if(value instanceof IJSON) {
+			final IJSONDeserializer<?> deserializer = GlobalSerializeMapping.getDeserializer(targetType);
 			if(null != deserializer) {
-				return (T) deserializer.deserialize((JSON)value);
+				return (T) deserializer.deserialize((IJSON)value);
 			}
 		}
 
@@ -85,7 +85,7 @@ public class JSONConverter implements Converter<JSON> {
 				// 此处特殊处理，认为返回null属于正常情况
 				return null;
 			}
-			
+
 			throw new ConvertException("Can not convert {} to type {}", value, ObjectUtil.defaultIfNull(TypeUtil.getClass(targetType), targetType));
 		}
 
@@ -93,7 +93,7 @@ public class JSONConverter implements Converter<JSON> {
 	}
 
 	@Override
-	public JSON convert(Object value, JSON defaultValue) throws IllegalArgumentException {
+	public IJSON convert(Object value, IJSON defaultValue) throws IllegalArgumentException {
 		return JSONUtil.parse(value);
 	}
 

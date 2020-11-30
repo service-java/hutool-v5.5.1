@@ -1,6 +1,6 @@
 package cn.hutool.json;
 
-import cn.hutool.json.serialize.JSONObjectSerializer;
+import cn.hutool.json.serialize.IJSONObjectSerializer;
 import lombok.ToString;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,11 +11,11 @@ public class CustomSerializeTest {
 
 	@Test
 	public void serializeTest() {
-		JSONUtil.putSerializer(CustomBean.class, (JSONObjectSerializer<CustomBean>) (json, bean) -> json.set("customName", bean.name));
-		
+		JSONUtil.putSerializer(CustomBean.class, (IJSONObjectSerializer<CustomBean>) (json, bean) -> json.set("customName", bean.name));
+
 		CustomBean customBean = new CustomBean();
 		customBean.name = "testName";
-		
+
 		JSONObject obj = JSONUtil.parseObj(customBean);
 		Assert.assertEquals("testName", obj.getStr("customName"));
 	}
@@ -27,7 +27,7 @@ public class CustomSerializeTest {
 			customBean.name = ((JSONObject)json).getStr("customName");
 			return customBean;
 		});
-		
+
 		String jsonStr = "{\"customName\":\"testName\"}";
 		CustomBean bean = JSONUtil.parseObj(jsonStr).toBean(CustomBean.class);
 		Assert.assertEquals("testName", bean.name);

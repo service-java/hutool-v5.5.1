@@ -43,8 +43,8 @@ final class InternalJSONUtil {
 	protected static Writer writeValue(Writer writer, Object value, int indentFactor, int indent, JSONConfig config) throws JSONException, IOException {
 		if (value == null || value instanceof JSONNull) {
 			writer.write(JSONNull.NULL.toString());
-		} else if (value instanceof JSON) {
-			((JSON) value).write(writer, indentFactor, indent);
+		} else if (value instanceof IJSON) {
+			((IJSON) value).write(writer, indentFactor, indent);
 		} else if (value instanceof Map) {
 			new JSONObject(value).write(writer, indentFactor, indent);
 		} else if (value instanceof Iterable || value instanceof Iterator || value.getClass().isArray()) {
@@ -56,10 +56,10 @@ final class InternalJSONUtil {
 			writer.write(formatDate(value, format));
 		} else if (value instanceof Boolean) {
 			writer.write(value.toString());
-		} else if (value instanceof JSONString) {
+		} else if (value instanceof IJSONString) {
 			String valueStr;
 			try {
-				valueStr = ((JSONString) value).toJSONString();
+				valueStr = ((IJSONString) value).toJSONString();
 			} catch (Exception e) {
 				throw new JSONException(e);
 			}
@@ -111,9 +111,9 @@ final class InternalJSONUtil {
 		if (value == null || value instanceof JSONNull) {
 			return "null";
 		}
-		if (value instanceof JSONString) {
+		if (value instanceof IJSONString) {
 			try {
-				return ((JSONString) value).toJSONString();
+				return ((IJSONString) value).toJSONString();
 			} catch (Exception e) {
 				throw new JSONException(e);
 			}

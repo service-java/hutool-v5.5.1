@@ -15,8 +15,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.serialize.GlobalSerializeMapping;
-import cn.hutool.json.serialize.JSONObjectSerializer;
-import cn.hutool.json.serialize.JSONSerializer;
+import cn.hutool.json.serialize.IJSONObjectSerializer;
+import cn.hutool.json.serialize.IJSONSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -40,7 +40,7 @@ import java.util.Set;
  *
  * @author looly
  */
-public class JSONObject implements JSON, JSONGetter<String>, Map<String, Object> {
+public class JSONObject implements IJSON, IJSONGetter<String>, Map<String, Object> {
 	private static final long serialVersionUID = -330220388580734346L;
 
 	/**
@@ -646,8 +646,8 @@ public class JSONObject implements JSON, JSONGetter<String>, Map<String, Object>
 		}
 
 		// 自定义序列化
-		final JSONSerializer serializer = GlobalSerializeMapping.getSerializer(source.getClass());
-		if (serializer instanceof JSONObjectSerializer) {
+		final IJSONSerializer serializer = GlobalSerializeMapping.getSerializer(source.getClass());
+		if (serializer instanceof IJSONObjectSerializer) {
 			serializer.serialize(this, source);
 			return;
 		}
